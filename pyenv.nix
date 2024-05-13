@@ -1,23 +1,25 @@
 {
+  pkgs,
   python3,
-  callPackageWith,
   injectPackages ? (ps: [])
 }:
 
 let
 
   # see https://summer.nixos.org/blog/callpackage-a-tool-for-the-lazy/
-  callPackage = callPackageWith (python3.pkgs // packages);
+  callPackage = pkgs.lib.callPackageWith (python3.pkgs // packages);
 
   packages = {
-    # name = callPackage ./definition.nix
+    anndata = callPackage ./anndata.nix { fetchPypi = pkgs.fetchPypi; };
+    mofapy2 = callPackage ./mofapy2.nix { fetchFromGitHub = pkgs.fetchFromGitHub; };
   };
 
 in (
 
   python3.withPackages (
-    ps:
-      (builtins.attrNames packages)
+    ps: 
+      #(builtins.map (a: builtins.getAttr a ps) (builtins.attrNames packages))
+      [ packages.mofapy2 ]
       ++ (injectPackages ps)
   )
 

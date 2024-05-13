@@ -10,9 +10,9 @@
     pkgs = import nixpkgs { system = "x86_64-linux"; };
 
     pyenv = import ./pyenv.nix {
-      python3 = pkgs.python310;
+      inherit pkgs;
+      python3 = pkgs.python311;
       injectPackages = ps: []; #[ ps.ipykernel ];
-      callPackageWith = pkgs.lib.callPackageWith;
     };
 
     flakeApp = program: {
